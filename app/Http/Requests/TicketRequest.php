@@ -12,7 +12,7 @@ class TicketRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,16 @@ class TicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|min:5|max:150',
+            'department_id' => 'required|exists:departments,id',
+            'requester_name' => 'required|string|min:3|max:200',
+            'priority' => 'required|in:Baixa,Media,Alta,Urgente',
+            'description' => 'required|string|min:10|max:1000',
+            'status' => 'sometimes|in:Aberto,Em Atendimento,Concluído',
         ];
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+             $rules['status'] = 'required|in:Aberto,Em Atendimento,Concluído';
+         } 
+         return $rules;
     }
 }
